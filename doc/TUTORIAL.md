@@ -46,28 +46,53 @@ This information allows other humans to help and build on your work.
 (4) Implementing
 ----------------
 
-### (4.1) Structure and Layout
+### (4.1) Choosing the right place for the badge
 
-Service badge code is stored in the `/services` directory in files ending in with `.service.js`
+> **TODO**: This section is boring and not hands-on.
+> It is more a reference or documentation but not all necessary to
+> understand before code is written.
 
-For services with a single badge, the badge code will generally be stored in
-`/services/servicename/servicename.service.js` e.g: [wercker](https://github.com/badges/shields/tree/master/services/wercker)
+Service badge code is stored in the [/services] directory.
+Each service has an own directory for its files.
+- In files ending in with `.service.js`, you can find the code which generates
+  the badge and handles requests.
+  Sometimes, code for a service can be re-used.
+  This might be the case when you add a badge for an API which is already used
+  by other badges.
+  - For services with a single badge, the badge code will generally be stored in
+    `/services/SERVICENAME/SERVICENAME.service.js`.
+    If you add a badge for a new API, you probabably create a new directory.  
+    Example: [wercker]
+  - For service families with multiple badges we usually store the code for each
+    badge in its own file like this:
+    - `/services/SERVICENAME/SERVICENAME-downloads.service.js`
+    - `/services/SERVICENAME/SERVICENAME-version.service.js` etc.
+    Example: [ruby gems]
+- In the files ending with `.tester.js`, you can find the code which uses
+  the shields server to test if the badges are generated correctly.
+  There is a [chapter on Tests][write tests].
 
-For service families with multiple badges we usually store the code for each badge in its own file e.g:
-* `/services/servicename/servicename-downloads.service.js`
-* `/services/servicename/servicename-version.service.js` etc
+Please replace `SERVICENAME` with your service name in the following.
 
-e.g: [ruby gems](https://github.com/badges/shields/tree/master/services/gem)
+### (4.2) Your First Badge
 
-[Tests](TUTORIAL.md#45-write-tests) for badge code are stored alongside the badge code in corresponding files ending with `.tester.js`.
+All service badge classes inherit from [BaseService].
+Other classes already implement useful behavior on top of [BaseService].
+- [BaseJsonService] implements requests to JSON APIs,
+  schema validation of the data and getting attributes from a JSON path.
+- If you are contributing to a *service family*, you may have a common super
+  class for the badges.
 
-If you are contributing a badge relating to a new service, create a new directory in `/services`. If there are already badges for this service, work in the existing directory.
+As a first step we will look at the code for an example which generates a badge
+without contacting an API.
 
-All service badge classes inherit from `BaseService` or another class which itself extends `BaseService` e.g: `BaseJsonService`.
-
-### (4.2) Our First Badge
-
-As a first step we will look at the code for an example which generates a badge without contacting an API.
+> **TODO**: The following code will be the code people copy the most.
+> If should contain the structure we want them to use:
+> - static badges generation
+> - rendering re-use
+> - everything except the call to the API request
+> - We can copy & paste the code from there on and only add some
+>   methods for JSON/raw
 
 ```js
 'use strict'                                         // (1)
@@ -236,7 +261,8 @@ module.exports = class GemVersion extends BaseJsonService {
 
 Save, run `npm start`, and you can see it [locally](http://127.0.0.1:3000/).
 
-### (4.5) Write Tests
+### (4.5) Write Tests <!-- Change the link below when you change the heading -->
+[write tests]: #45-write-tests 
 
 When creating a badge for a new service or changing a badge's behavior, tests
 should be included. They serve several purposes:
@@ -266,3 +292,10 @@ Once you have implemented a new badge:
 will review your contribution.
 * We'll work with you to progress your contribution suggesting improvements if necessary. Although there are some occasions where a contribution is not appropriate, if your contribution conforms to our [guidelines](https://github.com/badges/shields/blob/master/CONTRIBUTING.md#badge-guidelines) we'll aim to work towards merging it. The majority of pull requests adding a service badge are merged.
 * If your contribution is merged, the final comment on the pull request will be an automated post which you can monitor to tell when your contribution has been deployed to production.
+
+[/services]: ../services
+[wercker]: ../services/wercker
+[ruby gems]: ../services/gem
+[BaseService]: ../services/base.js
+[BaseJsonService]: ../services/base-json.js
+
