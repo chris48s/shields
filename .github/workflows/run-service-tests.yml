@@ -1,0 +1,15 @@
+name: Run tests
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - id: Checkout
+        uses: actions/checkout@v1
+
+      - id: file_changes
+        uses: trilom/file-changes-action@v1.2.3
+
+      - name: Run Service Tests
+        run: node ./core/service-test-runner/pull-request-services2-cli.js
