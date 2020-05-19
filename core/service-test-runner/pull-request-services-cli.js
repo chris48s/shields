@@ -25,7 +25,7 @@ async function getServicesFromDiff() {
   const files = JSON.parse(text)
   return files
     .map(file => {
-      const match = file.match(/^services\/(.+)\/.+\.service.js$/)
+      const match = file.match(/^services\/(.+)\/.+\.(service|tester).js$/)
       return match ? match[1].replace('-', '').toLowerCase() : undefined
     })
     .filter(Boolean)
