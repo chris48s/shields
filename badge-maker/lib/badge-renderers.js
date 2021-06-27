@@ -279,6 +279,56 @@ class Badge {
     return new this(params).render()
   }
 
+  getClipPathElement(rx) {
+    return new XmlElement({
+      name: 'clipPath',
+      content: [
+        new XmlElement({
+          name: 'rect',
+          attrs: {
+            width: `${this.width}`,
+            height: `${this.constructor.height}`,
+            rx,
+            fill: '#fff',
+          },
+        }),
+      ],
+      attrs: { id: 'r' },
+    })
+  }
+
+  getBackgroundGroupElement({ withGradient, attrs }) {
+    const leftRect = new XmlElement({
+      name: 'rect',
+      attrs: {
+        width: this.leftWidth,
+        height: this.constructor.height,
+        fill: this.labelColor,
+      },
+    })
+    const rightRect = new XmlElement({
+      name: 'rect',
+      attrs: {
+        x: this.leftWidth,
+        width: this.rightWidth,
+        height: this.constructor.height,
+        fill: this.color,
+      },
+    })
+    const gradient = new XmlElement({
+      name: 'rect',
+      attrs: {
+        width: this.width,
+        height: this.constructor.height,
+        fill: 'url(#s)',
+      },
+    })
+    const content = withGradient
+      ? [leftRect, rightRect, gradient]
+      : [leftRect, rightRect]
+    return new XmlElement({ name: 'g', content, attrs })
+  }
+
   render() {
     throw new Error('Not implemented')
   }
@@ -302,6 +352,43 @@ class Plastic extends Badge {
   }
 
   render() {
+    const gradient = new XmlElement({
+      name: 'linearGradient',
+      content: [
+        new XmlElement({
+          name: 'stop',
+          attrs: { offset: '0', 'stop-color': '#fff', 'stop-opacity': '.7' },
+        }),
+        new XmlElement({
+          name: 'stop',
+          attrs: { offset: '.1', 'stop-color': '#aaa', 'stop-opacity': '.1' },
+        }),
+        new XmlElement({
+          name: 'stop',
+          attrs: { offset: '.9', 'stop-color': '#000', 'stop-opacity': '.3' },
+        }),
+        new XmlElement({
+          name: 'stop',
+          attrs: { offset: '1', 'stop-color': '#000', 'stop-opacity': '.5' },
+        }),
+      ],
+      attrs: { id: 's', x2: '0', y2: '100%' },
+    })
+
+    const clipPath = this.getClipPathElement(4)
+
+    const backgroundGroup = this.getBackgroundGroupElement({
+      withGradient: true,
+      attrs: { 'clip-path': 'url(#r)' },
+    })
+
+    const foregroundGroupRendered = `
+      <g fill="#fff" text-anchor="middle" ${this.constructor.fontFamily} text-rendering="geometricPrecision" font-size="110">
+        ${this.renderedLogo}
+        ${this.renderedLabel}
+        ${this.renderedMessage}
+      </g>`
+
     return renderBadge(
       {
         links: this.links,
@@ -310,29 +397,12 @@ class Plastic extends Badge {
         accessibleText: this.accessibleText,
         height: this.constructor.height,
       },
-      `
-      <linearGradient id="s" x2="0" y2="100%">
-        <stop offset="0"  stop-color="#fff" stop-opacity=".7"/>
-        <stop offset=".1" stop-color="#aaa" stop-opacity=".1"/>
-        <stop offset=".9" stop-color="#000" stop-opacity=".3"/>
-        <stop offset="1"  stop-color="#000" stop-opacity=".5"/>
-      </linearGradient>
-
-      <clipPath id="r">
-        <rect width="${this.width}" height="${this.constructor.height}" rx="4" fill="#fff"/>
-      </clipPath>
-
-      <g clip-path="url(#r)">
-        <rect width="${this.leftWidth}" height="${this.constructor.height}" fill="${this.labelColor}"/>
-        <rect x="${this.leftWidth}" width="${this.rightWidth}" height="${this.constructor.height}" fill="${this.color}"/>
-        <rect width="${this.width}" height="${this.constructor.height}" fill="url(#s)"/>
-      </g>
-
-      <g fill="#fff" text-anchor="middle" ${this.constructor.fontFamily} text-rendering="geometricPrecision" font-size="110">
-        ${this.renderedLogo}
-        ${this.renderedLabel}
-        ${this.renderedMessage}
-      </g>`
+      [
+        gradient.render(),
+        clipPath.render(),
+        backgroundGroup.render(),
+        foregroundGroupRendered,
+      ].join('')
     )
   }
 }
@@ -355,6 +425,35 @@ class Flat extends Badge {
   }
 
   render() {
+    const gradient = new XmlElement({
+      name: 'linearGradient',
+      content: [
+        new XmlElement({
+          name: 'stop',
+          attrs: { offset: '0', 'stop-color': '#bbb', 'stop-opacity': '.1' },
+        }),
+        new XmlElement({
+          name: 'stop',
+          attrs: { offset: '1', 'stop-opacity': '.1' },
+        }),
+      ],
+      attrs: { id: 's', x2: '0', y2: '100%' },
+    })
+
+    const clipPath = this.getClipPathElement(3)
+
+    const backgroundGroup = this.getBackgroundGroupElement({
+      withGradient: true,
+      attrs: { 'clip-path': 'url(#r)' },
+    })
+
+    const foregroundGroupRendered = `
+      <g fill="#fff" text-anchor="middle" ${this.constructor.fontFamily} text-rendering="geometricPrecision" font-size="110">
+        ${this.renderedLogo}
+        ${this.renderedLabel}
+        ${this.renderedMessage}
+      </g>`
+
     return renderBadge(
       {
         links: this.links,
@@ -363,27 +462,12 @@ class Flat extends Badge {
         accessibleText: this.accessibleText,
         height: this.constructor.height,
       },
-      `
-      <linearGradient id="s" x2="0" y2="100%">
-        <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
-        <stop offset="1" stop-opacity=".1"/>
-      </linearGradient>
-
-      <clipPath id="r">
-        <rect width="${this.width}" height="${this.constructor.height}" rx="3" fill="#fff"/>
-      </clipPath>
-
-      <g clip-path="url(#r)">
-        <rect width="${this.leftWidth}" height="${this.constructor.height}" fill="${this.labelColor}"/>
-        <rect x="${this.leftWidth}" width="${this.rightWidth}" height="${this.constructor.height}" fill="${this.color}"/>
-        <rect width="${this.width}" height="${this.constructor.height}" fill="url(#s)"/>
-      </g>
-
-      <g fill="#fff" text-anchor="middle" ${this.constructor.fontFamily} text-rendering="geometricPrecision" font-size="110">
-        ${this.renderedLogo}
-        ${this.renderedLabel}
-        ${this.renderedMessage}
-      </g>`
+      [
+        gradient.render(),
+        clipPath.render(),
+        backgroundGroup.render(),
+        foregroundGroupRendered,
+      ].join('')
     )
   }
 }
@@ -406,6 +490,18 @@ class FlatSquare extends Badge {
   }
 
   render() {
+    const backgroundGroup = this.getBackgroundGroupElement({
+      withGradient: false,
+      attrs: { 'shape-rendering': 'crispEdges' },
+    })
+
+    const foregroundGroupRendered = `
+      <g fill="#fff" text-anchor="middle" ${this.constructor.fontFamily} text-rendering="geometricPrecision" font-size="110">
+        ${this.renderedLogo}
+        ${this.renderedLabel}
+        ${this.renderedMessage}
+      </g>`
+
     return renderBadge(
       {
         links: this.links,
@@ -414,17 +510,7 @@ class FlatSquare extends Badge {
         accessibleText: this.accessibleText,
         height: this.constructor.height,
       },
-      `
-      <g shape-rendering="crispEdges">
-        <rect width="${this.leftWidth}" height="${this.constructor.height}" fill="${this.labelColor}"/>
-        <rect x="${this.leftWidth}" width="${this.rightWidth}" height="${this.constructor.height}" fill="${this.color}"/>
-      </g>
-
-      <g fill="#fff" text-anchor="middle" ${this.constructor.fontFamily} text-rendering="geometricPrecision" font-size="110">
-        ${this.renderedLogo}
-        ${this.renderedLabel}
-        ${this.renderedMessage}
-      </g>`
+      [backgroundGroup.render(), foregroundGroupRendered].join('')
     )
   }
 }
