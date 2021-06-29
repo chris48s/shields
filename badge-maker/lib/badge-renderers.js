@@ -197,13 +197,21 @@ class Badge {
     labelColor,
   }) {
     const horizPadding = 5
-    const { hasLogo, totalLogoWidth, renderedLogo } = renderLogo({
-      logo,
-      badgeHeight: this.constructor.height,
-      horizPadding,
-      logoWidth,
-      logoPadding,
+
+    const hasLogo = !!logo
+    const totalLogoWidth = logoWidth + logoPadding
+    const logoHeight = 14
+    const logoElement = new XmlElement({
+      name: 'image',
+      attrs: {
+        x: horizPadding,
+        y: 0.5 * (this.constructor.height - logoHeight),
+        width: logoWidth,
+        height: logoHeight,
+        'xlink:href': logo,
+      },
     })
+
     const hasLabel = label.length || labelColor
     if (labelColor == null) {
       labelColor = '#555'
@@ -270,7 +278,7 @@ class Badge {
     this.label = label
     this.message = message
     this.accessibleText = accessibleText
-    this.renderedLogo = renderedLogo
+    this.renderedLogo = hasLogo ? logoElement.render() : ''
     this.renderedLabel = renderedLabel
     this.renderedMessage = renderedMessage
   }
