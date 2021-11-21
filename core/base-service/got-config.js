@@ -5,15 +5,20 @@ import { fileSize } from '../../services/validators.js'
 
 const schema = Joi.object({
   fetchLimit: fileSize,
+  userAgentBase: Joi.string().required(),
 }).required()
 const config = configModule.util.toObject()
 const publicConfig = Joi.attempt(config.public, schema, { allowUnknown: true })
 
 const fetchLimitBytes = bytes(publicConfig.fetchLimit)
 
-function getUserAgent() {
-  return 'Shields.io/2003a'
+function _getUserAgent(userAgentBase = publicConfig.userAgentBase) {
+  let version = 'dev'
+  if (process.env.HEROKU_SLUG_COMMIT) {
+    version = process.env.HEROKU_SLUG_COMMIT.substring(0, 7)
+  }
+  return `${userAgentBase}/${version}`
 }
-const userAgent = getUserAgent()
+const userAgent = _getUserAgent()
 
-export { fetchLimitBytes, userAgent }
+export { fetchLimitBytes, userAgent, _getUserAgent }
