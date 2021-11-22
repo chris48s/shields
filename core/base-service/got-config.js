@@ -14,6 +14,9 @@ const fetchLimitBytes = bytes(publicConfig.fetchLimit)
 
 function _getUserAgent(userAgentBase = publicConfig.userAgentBase) {
   let version = 'dev'
+  if (process.env.DOCKER_SHIELDS_VERSION) {
+    version = process.env.DOCKER_SHIELDS_VERSION
+  }
   if (process.env.HEROKU_SLUG_COMMIT) {
     version = process.env.HEROKU_SLUG_COMMIT.substring(0, 7)
   }
