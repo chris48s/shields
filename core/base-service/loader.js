@@ -22,9 +22,7 @@ class InvalidService extends Error {
 
 async function loadServiceClasses(servicePaths) {
   if (!servicePaths) {
-    servicePaths = glob.sync(
-      path.join(serviceDir, '**', '*.service.js').replace(/\\/g, '/')
-    )
+    servicePaths = glob.sync(path.join(serviceDir, '**', '*.service.js'))
   }
 
   const serviceClasses = []
