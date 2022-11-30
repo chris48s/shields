@@ -8,4 +8,5 @@ It is possible to use shields.io to make a wide variety of badges displaying sta
 - ![with a logo](https://img.shields.io/badge/with%20a%20logo-grey?style=for-the-badge&logo=javascript) - https://img.shields.io/badge/with%20a%20logo-grey?style=for-the-badge&logo=javascript
 
 Full documentation of styles and parameters: https://shields.io/#styles
+
 More documentation on logos: https://github.com/badges/shields/blob/master/doc/logos.md
