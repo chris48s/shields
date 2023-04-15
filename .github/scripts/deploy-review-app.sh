@@ -12,6 +12,8 @@ pr_json=$(curl --fail "https://api.github.com/repos/badges/shields/pulls/$PR_NUM
 
 # Attempt to apply the PR diff to the target branch
 # This will fail if it does not merge cleanly
+git config user.name "actions[bot]"
+git config user.email "actions@users.noreply.github.com"
 git fetch origin "pull/$PR_NUMBER/head:pr-$PR_NUMBER"
 git merge "pr-$PR_NUMBER"
 
