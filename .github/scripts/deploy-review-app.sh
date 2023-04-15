@@ -12,7 +12,7 @@ pr_json=$(curl --fail "https://api.github.com/repos/badges/shields/pulls/$PR_NUM
 
 # Attempt to apply the PR diff to the target branch
 # This will fail if it does not merge cleanly
-curl --location "$(echo "$pr_json" | jq .diff_url -r)" | git apply
+curl --location "$(echo "$pr_json" | jq .patch_url -r)" | git apply
 
 # If the app does not already exist, create it
 if ! flyctl status --app "$app"; then
