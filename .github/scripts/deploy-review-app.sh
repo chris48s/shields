@@ -24,7 +24,7 @@ if ! flyctl status --app "$app"; then
 fi
 
 # Deploy
-flyctl deploy --app "$app" --region "$region" --build-arg BASE_URL="https://$app.fly.dev/"
+flyctl deploy --app "$app" --region "$region"
 
 # Post a comment on the PR
 app_url=$(flyctl status --app "$app" --json | jq -r .Hostname)
