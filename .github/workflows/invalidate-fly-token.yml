@@ -5,8 +5,9 @@ on:
       - 'temp-invalidate-token'
 
 jobs:
-  cleanup-review-apps:
+  invalidate-fly-token:
     runs-on: ubuntu-latest
+    environment: 'Review Apps'
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
