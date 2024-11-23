@@ -1,6 +1,8 @@
 name: Invalidate Fly Token
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - 'temp-invalidate-token'
 
 jobs:
   cleanup-review-apps:
